@@ -11,7 +11,7 @@ public class Day4
         Console.WriteLine(day.PadLeft(Console.WindowWidth / 4 - day.Length / 4, '='));
 
 		//Example..
-		if (true)
+		if (false)
 		{
             int Exs = 0;
             
@@ -31,7 +31,7 @@ public class Day4
             Console.WriteLine($"\tSuccess : {Puzzle1() == 18}");
 			input=[
 				"MXS",
-				"XAX" +
+				"XAX",
 				"MXS"
 				];
 			Console.WriteLine($"\tSuccess : {Puzzle2() == 1}");
@@ -65,8 +65,8 @@ public class Day4
         //Nrml..
         GetInput();
         Puzzle1(); // 2447   2347 < ans
-        Puzzle2(); 
-	}
+        Puzzle2(); // 1868
+    }
 	
 	String puzzlePath = Directory.GetParent(Assembly.GetEntryAssembly().Location)
 		+"/2024/2024_day4_puzzle";
@@ -86,61 +86,63 @@ public class Day4
 		*/
 
 		string word = "XMAS";
+        int wl = word.Length-1;
 
-		var input2 = input.Select(line => line.Select(s=>s+"").ToList()).ToList();
+		var input2 = input.Select(line => line.ToList()).ToList();
             //Make it multidimensional then can use i and j
         
 		for(int i = 0; i < input2.Count; i++)
 		{
 			for(int j = 0; j < input2[i].Count; j++)
 			{
-				if(input2[i][j] == "X")
+				if(input2[i][j] == word[0])
 				{
 					//Need to check all around i.e. -word.Length => +word.Length -- only check for "MAS" other 3
-					if (i >= 3) //Allowed to check up
+					if (i >= wl) //Allowed to check up
                     {
-						res += $"{input[i][j]}{input[i - 1][j]}{input[i - 2][j]}{input[i - 3][j]}" == word ? 1 : 0;
+                        //res += String.Concat( input2.GetRange(i - wl, wl+1 ).Select((row,index) => row[j]) ) == word ? 1 : 0;
 
-                        //Logic for diag up-back
-                        if (j >= 3) //Allowed to check backward
+
+                        if ($"{input2[i][j]}{input2[i - 1][j]}{input2[i - 2][j]}{input2[i - 3][j]}" == word) { res += 1; }
+
+                        //up-back
+                        if (j >= wl) //Allowed to check backward
                         {
                             res += $"{input[i][j]}{input[i-1][j - 1]}{input[i-2][j - 2]}{input[i-3][j - 3]}" == word ? 1 : 0;
                         }
 
-                        //frwd-up
-                        if (input2[i].Count - 1 - j >= 3) //Allowed to check forward
+                        //up-frwd
+                        if (input2[i].Count - 1 - j >= wl) //Allowed to check forward
                         {
                             res += $"{input[i][j]}{input[i -1][j - -1]}{input[i -2][j - -2]}{input[i -3][j - -3]}" == word ? 1 : 0;
                         }
                     }
 
-                    if (input2.Count-1 -i >= 3) //Allowed to check down
+                    if (input2.Count-1 -i >= wl) //Allowed to check down
                     {
                         res += $"{input[i][j]}{input[i - - 1][j]}{input[i - - 2][j]}{input[i - - 3][j]}" == word ? 1 : 0;
 
                         //Logic for diag down-back
-                        if (j >= 3) //Allowed to check backward
+                        if (j >= wl) //Allowed to check backward
                         {
                             res += $"{input[i][j]}{input[i - - 1][j - 1]}{input[i - - 2][j - 2]}{input[i - - 3][j - 3]}" == word ? 1 : 0;
                         }
                         //frwd-down
-                        if (input2[i].Count - 1 - j >= 3) //Allowed to check forward
+                        if (input2[i].Count - 1 - j >= wl) //Allowed to check forward
                         {
                             res += $"{input[i][j]}{input[i - -1][j - -1]}{input[i - -2][j - -2]}{input[i - -3][j - -3]}" == word ? 1 : 0;
                         }
                     }
 
-                    if (j >= 3) //Allowed to check backward
+                    if (j >= wl) //Allowed to check backward
 					{
 						res += $"{input[i][j]}{input[i][j - 1]}{input[i][j - 2]}{input[i][j - 3]}" == word ? 1 : 0;
 					}
 
-					if (input2[i].Count-1 - j >= 3) //Allowed to check forward
+					if (input2[i].Count-1 - j >= wl) //Allowed to check forward
                     {
                         res += $"{input[i][j]}{input[i][j - - 1]}{input[i][j - - 2]}{input[i][j - - 3]}" == word ? 1 : 0;
                     }
-
-					//Diag frd
                 }
             }
 		}
@@ -160,25 +162,54 @@ public class Day4
 			"A" in middle of grid
 			"M" and "S" near the other pair of MAS
 		*/
+        string word = "MAS";
 
-        var input2 = input.Select(line => line.Select(s => s + "").ToList()).ToList();
+        var input2 = input.Select(line => line.ToList()).ToList();
+        //Make it multidimensional then can use i and j
 
-        for (int i =0; i < input2.Count -3 ; i++)
-        {for (int j = 0; i < input2[i].Count - 3; j++)
+        for (int i = 0; i < input2.Count; i++)
+        {
+            for (int j = 0; j < input2[i].Count; j++)
             {
-                                           //0,0 1,0 2,0 0,1, 1,1..
-                //Split into pure string? ["X", "S2, "A", "A"]
+                if (input2[i][j] == word[1]) //Found 'A' check corners!
+                {
+                    /*  m.s .m.
+                        .a. mas
+                        m.s .s.
+                    
+                        Always a offset of 1 up down left right!
+                    */
+                    if(i-1 >=0 && i + 1 < input2.Count && j-1>=0 && j+1 < input2[i].Count)
+                    {   //Within the grid/array (not at border) is 'A'
 
-                var grid = input2.GetRange(i, 3).Select(row => String.Join(",",row.GetRange(j,3))).ToList();
+                        res += (
 
-                    //GetRange to get the 3x3 sections
+                            (
+                            //TL=> BR
+                            input2[i - 1][j-1] =='M' && input2[i+1][j+1] == 'S'
+                            ||
+                            //BR => TL
+                            input2[i + 1][j + 1] == 'M' && input2[i - 1][j - 1] == 'S'
+                            )
 
-                //Check there is 1 A, 2 M, 2 S
+                            &&
 
+                            (
+                            input2[i+1][j - 1] == 'M' && input2[i-1][j + 1] == 'S'
+                            ||
+                            input2[i - 1][j + 1] == 'M' && input2[i + 1][j - 1] == 'S'
+                            )
+
+                            //Shape of 'X' - no need for + shape checks
+
+                            ) ? 1 : 0;
+                    }
+                }
             }
         }
 
-		Console.WriteLine($"{this.GetType().Name}::{MethodBase.GetCurrentMethod().Name} : {res}");
+
+        Console.WriteLine($"{this.GetType().Name}::{MethodBase.GetCurrentMethod().Name} : {res}");
 		return res;
 	}
 
@@ -186,7 +217,7 @@ public class Day4
 			//If file doesnt exist.. grab http else  is file
 		if (!File.Exists(puzzlePath))
 		{
-			using (HttpClient client = new HttpClient())
+			using (HttpClient client = new HttpClient() )
 			{
 				client.DefaultRequestHeaders.Add("Cookie", "session=" + sessionId);
 				var res = client.GetAsync($"https://adventofcode.com/{2024}/day/{4}/input").Result;

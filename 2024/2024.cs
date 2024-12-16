@@ -21,6 +21,7 @@ public class _2024
 		new Day2(); Console.WriteLine(); GC.Collect();
 		new Day3(); Console.WriteLine(); GC.Collect();
 		new Day4(); Console.WriteLine(); GC.Collect();
-
+		new Day5(); Console.WriteLine(); GC.Collect();
+		
 	}
 }
